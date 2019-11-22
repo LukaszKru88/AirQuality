@@ -8,15 +8,20 @@ class App extends React.Component {
     parameter: "",
     limit_results: 0,
     date: null,
-    cities: []
+    cities: [],
+    suggestions: []
   }
 
   componentDidMount() {
     this.setState({
-      country: "PL",
-      parameter: "pm25",
-      limit_results: 20,
-      date: this.getCurrentDate()
+      parameter: "so2",
+      limit_results: 100,
+      date: this.getCurrentDate(),
+      suggestions: [
+        { name: "Poland", code: "PL" },
+        { name: "Germany", code: "DE" },
+        { name: "France", code: "FR" },
+        { name: "Spain", code: "ES" }]
     })
   }
 
@@ -35,10 +40,30 @@ class App extends React.Component {
     this.setState({ [name]: value });
   }
 
-  onSubmit = async event => {
+  setCountry = (suggestions, userInput) => {
+    for (let suggestion of suggestions) {
+      if (suggestion.name === userInput)
+        return suggestion.code;
+    }
+    return "XYZ";
+  }
+
+  getUniqueCities = (cities, parameter) => {
+    return cities
+      .map(city => city[parameter])
+      .map((city, i, final) => final.indexOf(city) === i && i)
+      .filter(city => cities[city])
+      .map(city => cities[city])
+      .slice(0, 10);
+  }
+
+  onSubmit = async (event, userInput) => {
     event.preventDefault();
-    const { country, parameter, limit_results, date } = this.state
-    const url = `https://api.openaq.org/v1/measurements?country=${country}&parameter=${parameter}&order_by=value&sort=desc&limit=${limit_results}&date_from=${date}&date_to=${date}&format=json`
+    const { parameter, limit_results, date, suggestions } = this.state
+
+    await this.setState({ country: this.setCountry(suggestions, userInput) })
+
+    const url = `https://api.openaq.org/v1/measurements?country=${this.state.country}&parameter=${parameter}&order_by=value&sort=desc&limit=${limit_results}&date_from=${date}&date_to=${date}&format=json`
 
     let response = await fetch(url);
     response = await response.json();
@@ -54,6 +79,8 @@ class App extends React.Component {
           unit: result.unit
         };
       });
+
+      results = this.getUniqueCities(results, "city")
       this.setState({ cities: results });
     }
     else {
@@ -62,28 +89,15 @@ class App extends React.Component {
   }
 
   render() {
-    const { cities } = this.state
+    const { cities, suggestions } = this.state
     return (
       <div className="container">
         <header>
           <h1 className="text-center">Check air quality in Your country</h1>
         </header>
-        {/* <section>
-          <div className="row">
-            <form className="countryForm offset-3 col-6" onSubmit={this.onSubmit}>
-              <div className="input-group">
-                <input name="country" className="form-control" id="country" type="text" placeholder="Country..." onChange={this.onChange} value={this.state.country} />
-                <div className="input-group-append"><input className="btn btn-info text-uppercase" type="submit" value="Take a breath" /></div>
-              </div>
-            </form>
-          </div>
-        </section> */}
         <AutocompleteInput
-          suggestions={[
-            { name: "Poland", code: "PL" },
-            { name: "Germany", code: "DE" },
-            { name: "France", code: "FR" },
-            { name: "Spain", code: "ES" }]}
+          suggestions={suggestions}
+          onSubmit={this.onSubmit}
         />
         <section>
           <div className="row">
@@ -93,7 +107,6 @@ class App extends React.Component {
                 <thead className="text-uppercase">
                   <tr>
                     <th>City</th>
-                    <th>Location</th>
                     <th>Parameter</th>
                     <th>Value</th>
                     <th>Unit</th>
@@ -103,7 +116,6 @@ class App extends React.Component {
                 {cities.map((city, index) => (
                   <tr key={index}>
                     <td>{city.city}</td>
-                    <td>{city.location}</td>
                     <td>{city.parameter}</td>
                     <td>{city.value}</td>
                     <td>{city.unit}</td>
