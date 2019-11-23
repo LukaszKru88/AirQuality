@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
+import { withCookies } from "react-cookie";
 import PropTypes from "prop-types";
-// import Autocomplete from 'react-autocomplete';
 
 class AutocompleteInput extends Component {
     state = {
@@ -17,6 +17,13 @@ class AutocompleteInput extends Component {
     static defaultProps = {
         suggestions: []
     };
+
+    componentDidMount() {
+        const { cookies } = this.props
+        if (cookies.get("country")) {
+            this.setState({ userInput: cookies.get("country") })
+        }
+    }
 
     onChange = ({ currentTarget: input }) => {
         const { suggestions } = this.props;
@@ -103,7 +110,7 @@ class AutocompleteInput extends Component {
                 <div className="row">
                     <form className="countryForm offset-lg-3 col-lg-6" onSubmit={(event) => this.props.onSubmit(event, userInput)}>
                         <div className="input-group">
-                            <input name="country" className="form-control" id="country" type="text" placeholder="Country..." onChange={this.onChange} onKeyDown={this.onKeyDown} value={userInput} />
+                            <input name="country" className="form-control" id="country" type="text" placeholder="Country..." onChange={this.onChange} onKeyDown={this.onKeyDown} value={userInput} required />
                             <div className="input-group-append"><input className="btn btn-info text-uppercase" type="submit" value="Take a breath" /></div>
                         </div>
                     </form>
@@ -114,64 +121,4 @@ class AutocompleteInput extends Component {
     }
 }
 
-export default AutocompleteInput;
-
-// class AutocompleteInput extends Component {
-//     state = { value: '' };
-
-//     getCountry = () => {
-//         return [{ name: "Poland", code: "PL" },
-//         { name: "Germany", code: "DE" }, { name: "France", code: "FR" }, { name: "Spain", code: "ES" }
-//         ]
-//     }
-
-//     matchCountry = (state, value) => {
-//         console.log(state);
-//         console.log(value);
-//         return (
-//             state.name.toLowerCase().indexOf(value.toLowerCase()) !== -1 ||
-//             state.code.toLowerCase().indexOf(value.toLowerCase()) !== -1
-//         );
-//     }
-
-//     render() {
-//         return (
-//             <div className="card col-sm-6" style={{ marginTop: 40, marginLeft: 50 }}>
-//                 <div class="card-header">
-//                     Country Name :
-//       </div>
-//                 <div class="card-body">
-//                     <form>
-//                         <div className="form-group">
-
-//                             <Autocomplete
-//                                 value={this.state.value}
-//                                 inputProps={{ id: 'states-autocomplete' }}
-//                                 wrapperStyle={{ position: 'relative', display: 'inline-block' }}
-//                                 items={this.getCountry()}
-//                                 getItemValue={item => item.name}
-//                                 shouldItemRender={this.matchCountry}
-//                                 onChange={(event, value) => this.setState({ value })}
-//                                 onSelect={value => this.setState({ value })}
-//                                 renderMenu={children => (
-//                                     <div className="menu">
-//                                         {children}
-//                                     </div>
-//                                 )}
-//                                 renderItem={(item, isHighlighted) => (
-//                                     <div
-//                                         className={`item ${isHighlighted ? 'item-highlighted' : ''}`}
-//                                         key={item.abbr} >
-//                                         {item.name}
-//                                     </div>
-//                                 )}
-//                             />
-//                         </div>
-//                     </form>
-//                 </div>
-//             </div>
-//         );
-//     }
-// }
-
-// export default AutocompleteInput;
+export default withCookies(AutocompleteInput);
