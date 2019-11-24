@@ -82,7 +82,7 @@ class AutocompleteInput extends Component {
                 <div className="row">
                     <form className="countryForm offset-lg-3 col-lg-6" onSubmit={(event) => this.props.onSubmit(event, userInput)}>
                         <div className="input-group">
-                            <input name="country" className="form-control" id="country" type="text" placeholder="Country..." onChange={this.onChange} onKeyDown={this.onKeyDown} value={userInput} required />
+                            <input name="country" className="form-control" id="country" type="text" placeholder="Country..." onChange={this.onChange} value={userInput} required />
                             <div className="input-group-append"><input className="btn btn-info text-uppercase" type="submit" value="Take a breath" /></div>
                         </div>
                     </form>
