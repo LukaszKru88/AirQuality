@@ -19,9 +19,9 @@ class AutocompleteInput extends Component {
     };
 
     componentDidMount() {
-        const { cookies } = this.props
+        const { cookies } = this.props;
         if (cookies.get("country")) {
-            this.setState({ userInput: cookies.get("country") })
+            this.setState({ userInput: cookies.get("country") });
         }
     }
 
@@ -48,34 +48,6 @@ class AutocompleteInput extends Component {
             userInput: input.innerText
         });
     }
-
-    // onKeyDown = e => {
-    //     const { activeSuggestion, filteredSuggestions } = this.state;
-
-    //     if (e.keyCode === 13) {
-    //         this.setState({
-    //             activeSuggestion: 0,
-    //             showSuggestions: false,
-    //             userInput: filteredSuggestions[activeSuggestion]
-    //         });
-    //     }
-
-    //     else if (e.keyCode === 38) {
-    //         if (activeSuggestion === 0) {
-    //             return;
-    //         }
-
-    //         this.setState({ activeSuggestion: activeSuggestion - 1 });
-    //     }
-
-    //     else if (e.keyCode === 40) {
-    //         if (activeSuggestion - 1 === filteredSuggestions.length) {
-    //             return;
-    //         }
-
-    //         this.setState({ activeSuggestion: activeSuggestion + 1 });
-    //     }
-    // };
 
     render() {
         const { userInput, filteredSuggestions, showSuggestions } = this.state;

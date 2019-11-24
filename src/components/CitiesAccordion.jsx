@@ -7,12 +7,12 @@ class CitiesAccordion extends Component {
         cityDescription: ""
     }
 
-    onClick = async ({ currentTarget: input }) => {
-        const { url } = this.state
-        const { innerText: city } = input
+    onClick = async (city) => {
+        const { url } = this.state;
+
         let response = await fetch(url + city);
         response = await response.json();
-        console.log(response[2])
+
         this.setState({ cityDescription: response[2] });
     }
 
@@ -22,7 +22,7 @@ class CitiesAccordion extends Component {
 
         return (
             <div className="row">
-                {cities && cities.length > 0 &&
+                {cities && cities.length > 0 ?
                     <React.Fragment>
                         <Accordion className="offset-3 col-6">
                             <h5>List of 10 most polluted cities in selected country :</h5>
@@ -31,18 +31,23 @@ class CitiesAccordion extends Component {
                                     <Accordion.Toggle
                                         as={Card.Header}
                                         eventKey={index}
-                                        onClick={this.onClick}
+                                        onClick={() => this.onClick(city.city)}
                                     >
-                                        {city.city}
+                                        {<div>
+                                            <div className="float-left">{city.city}</div><div className="float-right">{`PM10: ${city.value} ${city.unit}`}</div>
+                                        </div>}
                                     </Accordion.Toggle>
                                     <Accordion.Collapse eventKey={index}>
-                                        <Card.Body>{cityDescription}</Card.Body>
+                                        <Card.Body>
+                                            {cityDescription[0] === "" ? `No data found about ${city.city} on Wikipedia` : cityDescription}
+                                        </Card.Body>
                                     </Accordion.Collapse>
 
                                 </Card>
                             ))}
                         </Accordion>
-                    </React.Fragment>}
+                    </React.Fragment> :
+                    ((cities && cities.length === 0) ? <h5 className="offset-3 col-6"><p>No data to view here</p></h5> : null)}
             </div>);
     }
 }
