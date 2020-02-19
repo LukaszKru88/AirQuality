@@ -52,3 +52,13 @@ li:hover {
   color: #5bc0de ;
   cursor: pointer;
 }
+
+ul.suggestions {
+  list-style-type: none;
+}
+
+li:hover,
+li.suggestion-active {
+  color: #000;
+  background: #F0F9FF;
+}
