@@ -25,7 +25,7 @@ const CitiesAccordion = ({ cities }) => {
         <div className="row">
             {cities && cities.length ?
                 <React.Fragment>
-                    <Accordion className="offset-3 col-6">
+                    <Accordion className="offset-md-2 col-md-8">
                         <h5>List of 10 most polluted cities in selected country :</h5>
                         {cities.map(city => (
                             < Card key={city.location} >
@@ -34,7 +34,7 @@ const CitiesAccordion = ({ cities }) => {
                                     eventKey={city}
                                     onClick={() => handleClick(city.city)}
                                 >
-                                    {<div>
+                                    {<div className="accordion">
                                         <div className="float-left">{city.city}</div><div className="float-right">{`PM10: ${city.value} ${city.unit}`}</div>
                                     </div>}
                                 </Accordion.Toggle>
