@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
-const AutocompleteInput = ({ onSubmit, countries, country }) => {
-    console.log("Render Autocomplete Input");
+const AutocompleteInput = ({ country, countries, handleSubmit }) => {
     const [input, setInput] = useState("");
-    const [inputFromButtonClick, setInputFromButtonClick] = useState(null);
     const [suggestions, setSuggestions] = useState([]);
     const [isVisible, setVisible] = useState(false);
     const [activeSuggestion, setActiveSuggestion] = useState(0);
@@ -17,8 +15,8 @@ const AutocompleteInput = ({ onSubmit, countries, country }) => {
     };
 
     const handleSubmitButton = () => {
-        setInputFromButtonClick(input);
         setVisible(false);
+        handleSubmit(input);
     }
 
     const handleSuggestionClick = event => {
@@ -49,23 +47,15 @@ const AutocompleteInput = ({ onSubmit, countries, country }) => {
     }
 
     useEffect(() => {
-        if (country) {
-            setInput(country);
-        }
-    }, [country])
+        console.log("Firing componenetDidMount");
+        if (country) setInput(country);
+    }, []);
 
     useEffect(() => {
         if (input.length > 0) {
             setSuggestions(countries.filter(country => country.name.toLowerCase().indexOf(input.toLowerCase()) > -1));
         }
     }, [input, countries]);
-
-    useEffect(() => {
-        if (inputFromButtonClick) {
-            console.log("Trigger onSubmit")
-            onSubmit(inputFromButtonClick);
-        }
-    }, [inputFromButtonClick, onSubmit])
 
     let suggestionListComponent = (
         suggestions.map((suggestion, index) => {
@@ -79,8 +69,8 @@ const AutocompleteInput = ({ onSubmit, countries, country }) => {
     );
 
     return (
-        <div className="row justify-content-md-center m-5">
-            <div className="col-6">
+        <div className="row justify-content-center">
+            <div className="col-md-8">
                 <div className="input-group">
                     <input name="country" type="text" className="form-control" placeholder="country..." value={input} onChange={handleChange} onKeyDown={handleKeyDown} required />
                     <div className="input-group-append">
@@ -96,96 +86,3 @@ const AutocompleteInput = ({ onSubmit, countries, country }) => {
 }
 
 export default React.memo(AutocompleteInput);
-
-// class AutocompleteInput extends Component {
-//     state = {
-//         activeSuggestion: 0,
-//         userInput: "",
-//         filteredSuggestions: [],
-//         showSuggestions: false
-//     }
-
-//     static propTypes = {
-//         suggestions: PropTypes.instanceOf(Array)
-//     };
-
-//     static defaultProps = {
-//         suggestions: []
-//     };
-
-//     componentDidMount() {
-//         const { cookies } = this.props;
-//         if (cookies.get("country")) {
-//             this.setState({ userInput: cookies.get("country") });
-//         }
-//     }
-
-//     onChange = ({ currentTarget: input }) => {
-//         const { suggestions } = this.props;
-//         const filteredSuggestions = suggestions.filter(
-//             suggestion =>
-//                 suggestion.name.toLowerCase().indexOf(input.value.toLowerCase()) > -1
-//         );
-
-//         this.setState({
-//             activeSuggestion: 0,
-//             userInput: input.value,
-//             filteredSuggestions,
-//             showSuggestions: true
-//         })
-//     }
-
-//     onClick = ({ currentTarget: input }) => {
-//         this.setState({
-//             activeSuggestion: 0,
-//             filteredSuggestions: [],
-//             showSuggestions: false,
-//             userInput: input.innerText
-//         });
-//     }
-
-//     render() {
-//         const { userInput, filteredSuggestions, showSuggestions } = this.state;
-//         let suggestionsList;
-
-//         if (userInput && showSuggestions) {
-//             if (filteredSuggestions.length) {
-//                 suggestionsList = (
-//                     <div className="row">
-//                         <ul className="suggestions offset-lg-3 col-lg-6">
-//                             {filteredSuggestions.map((suggestion, index) => {
-//                                 return (
-//                                     <li key={index} onClick={this.onClick}>
-//                                         {suggestion.name}
-//                                     </li>
-//                                 );
-//                             })}
-//                         </ul>
-//                     </div>
-//                 )
-//             } else {
-//                 suggestionsList = (
-//                     <div className="text-center offset-lg-3 col-lg-6">
-//                         <em>No suggestions</em>
-//                     </div>
-//                 );
-//             }
-//         }
-
-//         return (
-//             <React.Fragment>
-//                 <div className="row">
-//                     <form className="countryForm offset-lg-3 col-lg-6" onSubmit={(event) => this.props.onSubmit(event, userInput)}>
-//                         <div className="input-group">
-//                             <input name="country" className="form-control" id="country" type="text" placeholder="Country..." onChange={this.onChange} value={userInput} required />
-//                             <div className="input-group-append"><input className="btn btn-info text-uppercase" type="submit" value="Take a breath" /></div>
-//                         </div>
-//                     </form>
-//                 </div>
-//                 {suggestionsList}
-//             </React.Fragment>
-//         );
-//     }
-// }
-
-// export default withCookies(AutocompleteInput);
