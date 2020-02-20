@@ -62,3 +62,13 @@ li.suggestion-active {
   color: #000;
   background: #F0F9FF;
 }
+
+@media (max-width: 576px){
+  h1{
+    font-size: 2.2em;
+  }
+
+  .accordion{
+    font-size: 12px
+  }
+}
