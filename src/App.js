@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { withCookies, useCookies } from "react-cookie";
 import axios from 'axios';
 import AutocompleteInput from './components/AutocompleteInput';
@@ -18,25 +18,35 @@ const resultsLimit = 100;
 
 function App() {
   console.log("Render App")
-  const [country, setCountry] = useState("");
+  const [{ country }, setCountry] = useCookies(["country"]);
   const [cities, setCities] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  //const [cookies, setCookie] = useCookies();
+  const firstFetch = useRef(true);
 
-  const getCountry = callbackCountry => {
-    console.log("Submiting");
-    setCountry(countries.find(country => country.name === callbackCountry));
+  const getData = callbackCountry => {
+    if (callbackCountry) {
+      console.log("Firing getData() with: ", callbackCountry);
+      setCountry("country", countries.filter(country => country.name.toLowerCase() === callbackCountry.toLowerCase()));
+    } else {
+      toast.error("To check air quality You need to type in country name",
+        {
+          autoClose: 5000,
+          hideProgressBar: true,
+        });
+    }
   }
 
-  // useEffect(() => {
-  //   if (cookies.country)
-  //     setCountry(cookies.country);
-  // }, [cookies.country])
-
   useEffect(() => {
+    if (firstFetch.current) {
+      firstFetch.current = false;
+      return;
+    }
+
     const fetchData = async () => {
+      console.log(country[0].code);
       setIsLoading(true);
-      const response = await axios.get(`https://api.openaq.org/v1/measurements?country=${country.code}&parameter=${parameter}&order_by=value&sort=desc&limit=${resultsLimit}&format=json`)
+      const response = await axios.get(`https://api.openaq.org/v1/measurements?country=${country[0].code}&parameter=${parameter}&order_by=value&sort=desc&limit=${resultsLimit}&format=json`
+      );
 
       if (!response.error) {
         let { results } = response.data;
@@ -53,10 +63,8 @@ function App() {
       }
     }
 
-    if (country) {
-      console.log("Fetching data")
-      fetchData();
-    }
+    console.log("Firing fetch");
+    fetchData();
   }, [country]);
 
   const getUniqueCities = (cities, parameter) => {
@@ -71,10 +79,14 @@ function App() {
   return (
     <div className="container">
       <header>
-        <h1 className="text-center">Check air quality in Your country</h1>
+        <h1 className="text-center m-5">Check air quality in Your country</h1>
       </header>
       <section>
-        <AutocompleteInput onSubmit={getCountry} countries={countries} country={country.name} />
+        <AutocompleteInput
+          country={country ? country[0].name : ""}
+          countries={countries}
+          handleSubmit={getData}
+        />
       </section>
       <ToastContainer />
       {isLoading ? "Loading..." :
