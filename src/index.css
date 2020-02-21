@@ -63,6 +63,14 @@ li.suggestion-active {
   background: #F0F9FF;
 }
 
+.footer{
+  text-align: center;
+  background-color: rgba(51, 47, 47, 0.671);
+  color: white;
+  padding: 2px 0;
+  letter-spacing: 1px;
+}
+
 @media (max-width: 576px){
   h1{
     font-size: 2.2em;
