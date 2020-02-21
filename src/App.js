@@ -103,11 +103,11 @@ function App() {
         <section>
           <CitiesAccordion cities={cities} />
         </section>}
-      <footer>
+      {/* <footer>
         <div className="footer offset-md-2 col-md-8">
           <h5>Always care about Your lungs! Every breath is a essence of life</h5>
         </div>
-      </footer>
+      </footer> */}
     </div>
   );
 }
